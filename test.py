@@ -6,6 +6,7 @@
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0', port=105)
 import torch
+import socket
 import cv2 
 import numpy as np
 # import argparse
@@ -63,5 +64,5 @@ def run(server_class=HTTPServer, handler_class=S, addr="localhost", port=8000):
     httpd.serve_forever()
 
 # run(addr='192.168.31.45', port=9941)
-run(addr='192.168.31.179', port=9941)
+run(addr=socket.gethostbyname(socket.gethostname()), port=9941)
 # run(addr='14.161.146.131', port=9941)

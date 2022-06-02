@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 content_type = 'image/jpeg'
 headers = {'Content-Type': content_type}
-url = 'http://192.168.31.179:9941'
+url = 'http://127.0.1.1:9941'
 cam=cv2.VideoCapture(0);
 global frame
 while True:
