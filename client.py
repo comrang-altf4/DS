@@ -6,7 +6,7 @@ import numpy as np
 content_type = 'image/jpeg'
 headers = {'Content-Type': content_type}
 url = 'http://127.0.1.1:9941'
-cam=cv2.VideoCapture(0);
+cam=cv2.VideoCapture(-1);
 global frame
 while True:
     ret, frame=cam.read()
@@ -15,23 +15,24 @@ while True:
     cv2.imshow('frame',frame)
     k=cv2.waitKey(1);
     if k==27:
-        cv2.destroyAllWindows()
         break
     if k==32:
         cv2.imwrite('test.jpg',frame)
-        cv2.destroyAllWindows()
+        img = {'file': open('./test.jpg', 'rb')}
+        response = requests.post(url, files=img)
+        frame=cv2.imread('test.jpg')
+        content=response.content
+        content= content.decode('utf8').replace("'", '"')
+        res=json.loads(content)
+        for i in range(len(res['xmin'])):
+            xmin=int(res['xmin'][str(i)])
+            ymin=int(res['ymin'][str(i)])
+            xmax=int(res['xmax'][str(i)])
+            ymax=int(res['ymax'][str(i)])
+            frame=cv2.rectangle(frame,(xmin,ymin),(xmax,ymax),(0,255,0),2)
+            frame=cv2.putText(frame,str(res['name'][str(i)])+' '+str(res['confidence'][str(i)]),(xmin,ymin),cv2.FONT_HERSHEY_SIMPLEX,0.8,(0,255,0),2)
+        cv2.imwrite('res.jpg',frame)
+        cv2.imshow('res2',frame)
+        cv2.waitKey(0)
         break
-img = {'file': open('./test.jpg', 'rb')}
-response = requests.post(url, files=img)
-content=response.content
-content= content.decode('utf8').replace("'", '"')
-res=json.loads(content)
-xmin=int(res['xmin']['0'])
-ymin=int(res['ymin']['0'])
-xmax=int(res['xmax']['0'])
-ymax=int(res['ymax']['0'])
-frame=cv2.rectangle(frame,(xmin,ymin),(xmax,ymax),(0,255,0),2)
-frame=cv2.putText(frame,str(res['name']['0'])+' '+str(res['confidence']['0']),(xmin,ymin),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
-cv2.imwrite('res.jpg',frame)
-cv2.imshow('res2',cv2.imread('res.jpg'))
-cv2.waitKey(0)
+cv2.destroyAllWindows()
