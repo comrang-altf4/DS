@@ -47,8 +47,9 @@ class S(BaseHTTPRequestHandler):
             model = torch.hub.load('ultralytics/yolov5', 'yolov5s')  
             res=model(img)
             res.save(save_dir='pics.jpg')
-            print(res.pandas().xyxy[0])
-            self.wfile.write(img.tobytes())
+            df_byte = res.pandas().xyxy[0].to_json().encode()
+            print(df_byte)
+            self.wfile.write(df_byte)
 
         except Exception as e:
             print(e)
